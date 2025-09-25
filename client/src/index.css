@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* กำหนดค่าเริ่มต้นสำหรับทั้งโปรเจกต์
+*/
+body {
+    background-color: #F5F1EA; /* สีพื้นหลังหลัก (สีเบจ) */
+    font-family: 'Poppins', sans-serif; /* ฟอนต์หลักของเว็บ */
+    color: #333; /* สีตัวอักษรเริ่มต้น */
+    -webkit-font-smoothing: antialiased; /* ทำให้ฟอนต์คมชัดขึ้นบน macOS/iOS */
+    -moz-osx-font-smoothing: grayscale; /* ทำให้ฟอนต์คมชัดขึ้นบน Firefox */
+}
+
+/*
+  เพิ่ม class ที่ใช้บ่อยๆ เพื่อความสะดวก
+  คุณสามารถเรียกใช้ class เหล่านี้ได้เลยใน JSX ของคุณ
+  เช่น <h1 className="text-brand-dark">...</h1>
+*/
+@layer components {
+    .text-brand-dark { 
+        color: #2C3E50; 
+    }
+    .bg-brand-dark { 
+        background-color: #2C3E50; 
+    }
+    .text-brand-gold { 
+        color: #E6B325; 
+    }
+    .bg-brand-gold { 
+        background-color: #E6B325; 
+    }
+}
+
