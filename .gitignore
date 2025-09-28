@@ -115,3 +115,8 @@ coverage/
 
 # Netlify
 .netlify
+
+# Documentation files (exclude from deployment)
+README.txt
+README_install_command.txt
+STARTUP_GUIDE.md
