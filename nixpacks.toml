@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs", "npm"]
+nixPkgs = ["nodejs_18", "npm"]
 
 [phases.install]
 cmds = [
@@ -16,3 +16,6 @@ cmds = [
 
 [start]
 cmd = "cd server && npm start"
+
+[variables]
+NODE_ENV = "production"
