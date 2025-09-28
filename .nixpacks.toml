@@ -10,7 +10,7 @@ cmds = [
 
 [phases.build]
 cmds = [
-  "cd client && npm run build",
+  "export VITE_API_URL=https://web-production-bf4ac.up.railway.app && cd client && npm run build",
   "cd ../server && npx prisma generate",
   "cd ../server && npx prisma db push",
   "cd ../server && npm run setup-db"
@@ -21,3 +21,4 @@ cmd = "node index.js"
 
 [variables]
 NODE_ENV = "production"
+VITE_API_URL = "https://web-production-bf4ac.up.railway.app"
