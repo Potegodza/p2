@@ -1,6 +1,3 @@
-# Nixpacks files (keep for Railway)
-# .nixpacks/
-
 # Documentation files
 README.txt
 README_install_command.txt
@@ -13,7 +10,6 @@ RAILWAY_DEPLOY.md
 .github/
 .gitignore
 .railwayignore
-.dockerignore
 
 # Test files
 coverage/
