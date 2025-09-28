@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const path = require('path');
 const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
@@ -27,6 +28,19 @@ app.use('/api', authRoutes);
 app.use('/api', carRoutes);
 app.use('/api', userRoutes);
 app.use('/api', stripeRoutes);
+
+// Serve static files from client build
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Catch all handler: send back React's index.html file for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 
 // Start Server
