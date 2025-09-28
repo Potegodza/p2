@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+
 /**
  * Creates a Stripe Payment Intent by sending the total price to the server.
  * @param {string} token The user's authentication token.
@@ -8,7 +10,7 @@ import axios from 'axios';
  */
 export const createPaymentIntent = async (token, payload) => {
     // ✅ This is the corrected endpoint URL (removed "/user")
-    return await axios.post('http://localhost:5001/api/create-payment-intent', payload, {
+    return await axios.post(`${API_URL}/api/create-payment-intent`, payload, {
         headers: {
             Authorization: `Bearer ${token}`
         }

@@ -2,8 +2,10 @@
 
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+
 export const createCar = async (token, form) => {
-  return axios.post("http://localhost:5001/api/car", form, {
+  return axios.post(`${API_URL}/api/car`, form, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -11,11 +13,11 @@ export const createCar = async (token, form) => {
 };
 
 export const listCar = async (count = 20) => {
-  return axios.get("http://localhost:5001/api/cars/" + count);
+  return axios.get(`${API_URL}/api/cars/` + count);
 };
 
 export const readCar = async (token, id) => {
-  return axios.get("http://localhost:5001/api/car/" + id, {
+  return axios.get(`${API_URL}/api/car/` + id, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -23,7 +25,7 @@ export const readCar = async (token, id) => {
 };
 
 export const deleteCar = async (token, id) => {
-  return axios.delete("http://localhost:5001/api/car/" + id, {
+  return axios.delete(`${API_URL}/api/car/` + id, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -31,7 +33,7 @@ export const deleteCar = async (token, id) => {
 };
 
 export const updateCar = async (token, id, form) => {
-  return axios.put("http://localhost:5001/api/car/" + id, form, {
+  return axios.put(`${API_URL}/api/car/` + id, form, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -40,7 +42,7 @@ export const updateCar = async (token, id, form) => {
 
 export const uploadFiles = async (token, form) => {
   return axios.post(
-    "http://localhost:5001/api/images",
+    `${API_URL}/api/images`,
     {
       image: form,
     },
@@ -54,7 +56,7 @@ export const uploadFiles = async (token, form) => {
 
 export const removeFiles = async (token, public_id) => {
   return axios.post(
-    "http://localhost:5001/api/removeimages",
+    `${API_URL}/api/removeimages`,
     {
       public_id,
     },
@@ -67,11 +69,11 @@ export const removeFiles = async (token, public_id) => {
 };
 
 export const searchFilters = async (arg) => {
-  return axios.post("http://localhost:5001/api/search/filters", arg);
+  return axios.post(`${API_URL}/api/search/filters`, arg);
 };
 
 export const listCarBy = async (sort, order, limit) => {
-  return axios.post("http://localhost:5001/api/carby", {
+  return axios.post(`${API_URL}/api/carby`, {
     sort,
     order,
     limit,
@@ -79,7 +81,7 @@ export const listCarBy = async (sort, order, limit) => {
 };
 
 export const changeCarStatus = async (token, id, status) => {
-  return axios.put(`http://localhost:5001/api/car/${id}/status`, 
+  return axios.put(`${API_URL}/api/car/${id}/status`, 
     { status },
     {
       headers: {

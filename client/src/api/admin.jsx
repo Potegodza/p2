@@ -1,7 +1,8 @@
 import axios from "axios";
 import { mockApiResponse, mockAdminStats } from "../utils/mockApi";
 
-const API_BASE_URL = "http://localhost:5001/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const API_BASE_URL = `${API_URL}/api`;
 
 /**
  * Fetches admin dashboard statistics

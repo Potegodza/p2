@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+
 /**
  * Creates a new rental record for the logged-in user.
  * This is typically called after a successful payment or booking confirmation.
@@ -8,7 +10,7 @@ import axios from "axios";
  * @returns {Promise} Axios promise object.
  */
 export const createRental = async (token, rentalData) => {
-  return axios.post("http://localhost:5001/api/user/rental", rentalData, {
+  return axios.post(`${API_URL}/api/user/rental`, rentalData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -22,7 +24,7 @@ export const createRental = async (token, rentalData) => {
  */
 export const getRentalHistory = async (token) => {
   // This endpoint fetches all rentals for the current user.
-  return axios.get("http://localhost:5001/api/user/rentals", {
+  return axios.get(`${API_URL}/api/user/rentals`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
