@@ -6,7 +6,7 @@ This guide will help you deploy your Car Rental application to production using 
 
 - GitHub account
 - Vercel account (for frontend)
-- Railway account (for backend)
+- Render account (for backend)
 - Database service (PlanetScale/Supabase)
 - Cloudinary account (for image storage)
 - Stripe account (for payments)
@@ -16,14 +16,14 @@ This guide will help you deploy your Car Rental application to production using 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend       │    │   Database      │
-│   (Vercel)      │◄──►│   (Railway)     │◄──►│   (PlanetScale) │
+│   (Vercel)      │◄──►│   (Render)      │◄──►│   (PlanetScale) │
 │   React + Vite  │    │   Node.js + API │    │   MySQL         │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   CDN           │    │   File Storage  │    │   Monitoring    │
-│   (Vercel CDN)  │    │   (Cloudinary) │    │   (Railway)     │
+│   (Vercel CDN)  │    │   (Cloudinary) │    │   (Render)      │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -99,11 +99,11 @@ vercel --prod
 Set these in Vercel dashboard:
 
 ```env
-VITE_API_URL=https://your-backend-url.railway.app
+VITE_API_URL=https://your-backend-url.onrender.com
 VITE_STRIPE_PUBLISHABLE_KEY=pk_live_your_stripe_key
 ```
 
-## ⚙️ Backend Deployment (Railway)
+## ⚙️ Backend Deployment (Render)
 
 ### 1. Prepare Backend
 
@@ -112,31 +112,35 @@ cd server
 npm install
 ```
 
-### 2. Deploy to Railway
+### 2. Deploy to Render
 
-#### Method A: Railway CLI
+#### Method A: Render Dashboard
+1. Go to [render.com](https://render.com)
+2. Sign up/Login with GitHub
+3. Click "New +" → "Web Service"
+4. Connect your GitHub repository
+5. Set configuration:
+   - **Name**: `car-rental-backend`
+   - **Root Directory**: `server`
+   - **Build Command**: `npm install && npx prisma generate`
+   - **Start Command**: `npm start`
+   - **Node Version**: `18`
+
+#### Method B: Render CLI (Optional)
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
+# Install Render CLI
+npm install -g @render/cli
 
 # Login
-railway login
-
-# Initialize project
-railway init
+render login
 
 # Deploy
-railway up
+render deploy
 ```
 
-#### Method B: GitHub Integration
-1. Connect GitHub repo to Railway
-2. Set service directory: `server`
-3. Configure environment variables
+### 3. Environment Variables (Render)
 
-### 3. Environment Variables (Railway)
-
-Set these in Railway dashboard:
+Set these in Render dashboard:
 
 ```env
 DATABASE_URL=mysql://username:password@host:port/database
@@ -186,7 +190,7 @@ The project includes GitHub Actions workflow (`.github/workflows/deploy.yml`) th
 
 1. **Runs Tests** on every push/PR
 2. **Deploys Frontend** to Vercel on main branch
-3. **Deploys Backend** to Railway on main branch
+3. **Deploys Backend** to Render on main branch
 
 ### Manual Deployment Commands
 
@@ -198,7 +202,7 @@ vercel --prod
 
 # Backend
 cd server
-railway up
+render deploy
 ```
 
 ## 🔍 Health Checks
@@ -208,15 +212,15 @@ railway up
 - Should return React app
 
 ### Backend Health Check
-- URL: `https://your-backend.railway.app/api/health`
+- URL: `https://your-backend.onrender.com/api/health`
 - Should return: `{"status": "ok"}`
 
 ## 📊 Monitoring
 
-### Railway Monitoring
-- Logs: Available in Railway dashboard
+### Render Monitoring
+- Logs: Available in Render dashboard
 - Metrics: CPU, Memory, Network
-- Alerts: Configure in Railway settings
+- Alerts: Configure in Render settings
 
 ### Vercel Monitoring
 - Analytics: Available in Vercel dashboard

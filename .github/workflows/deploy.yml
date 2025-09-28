@@ -77,9 +77,8 @@ jobs:
     - name: Install dependencies
       run: cd server && npm ci
     
-    - name: Deploy to Railway
-      uses: railwayapp/railway-deploy@v1
+    - name: Deploy to Render
+      uses: johnbeynon/render-deploy-action@v0.0.8
       with:
-        railway-token: ${{ secrets.RAILWAY_TOKEN }}
-        service: car-rental-backend
-        working-directory: ./server
+        service-id: ${{ secrets.RENDER_SERVICE_ID }}
+        api-key: ${{ secrets.RENDER_API_KEY }}
