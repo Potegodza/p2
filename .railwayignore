@@ -1,5 +1,5 @@
-# Force Railway to use Dockerfile instead of nixpacks
-.nixpacks/
+# Nixpacks files (keep for Railway)
+# .nixpacks/
 
 # Documentation files
 README.txt
