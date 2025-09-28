@@ -22,3 +22,4 @@ cmd = "node index.js"
 [variables]
 NODE_ENV = "production"
 VITE_API_URL = "https://web-production-bf4ac.up.railway.app"
+FRONTEND_URL = "https://web-production-bf4ac.up.railway.app"

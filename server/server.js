@@ -9,7 +9,21 @@ const cors = require('cors');
 // Middleware
 app.use(morgan('dev'));
 app.use(express.json({ limit: '20mb' }));
-app.use(cors());
+
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://web-production-bf4ac.up.railway.app',
+    process.env.FRONTEND_URL || 'https://web-production-bf4ac.up.railway.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
 
 // --- Routes ---
 // นำเข้าไฟล์ Route ต่างๆ
