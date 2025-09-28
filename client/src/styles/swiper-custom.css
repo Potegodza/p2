@@ -1,0 +1,68 @@
+/* Custom Swiper Styles - Hide visual indicators but keep functionality */
+
+/* Hide all Swiper pagination dots */
+.swiper-pagination {
+  display: none !important;
+}
+
+/* Hide all Swiper navigation arrows */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+/* Make pagination bullets invisible but keep clickable area */
+.swiper-pagination-bullet {
+  opacity: 0 !important;
+  background: transparent !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 0 !important;
+  background: transparent !important;
+}
+
+/* Alternative approach: Make bullets very small and transparent */
+.swiper-pagination-bullet-alt {
+  opacity: 0.1 !important;
+  background: transparent !important;
+  width: 4px !important;
+  height: 4px !important;
+}
+
+/* Hide scrollbar for Swiper container */
+.swiper {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.swiper::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Ensure Swiper maintains touch/swipe functionality */
+.swiper-wrapper {
+  touch-action: pan-y;
+}
+
+/* Custom class for completely hidden controls */
+.swiper-hidden-controls {
+  --swiper-theme-color: transparent;
+  --swiper-navigation-color: transparent;
+  --swiper-pagination-color: transparent;
+}
+
+.swiper-hidden-controls .swiper-pagination {
+  display: none !important;
+}
+
+.swiper-hidden-controls .swiper-button-next,
+.swiper-hidden-controls .swiper-button-prev {
+  display: none !important;
+}
+
+
+

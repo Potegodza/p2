@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getRentalsAdmin, changeRentalStatus } from "../../api/admin";
+import { getRentalsAdmin, changeRentalStatus } from "../../api/rental";
 import useCarRentalStore from "../../store/carRentalStore";
 import { toast } from "react-toastify";
 import { numberFormat } from "../../utils/number";
@@ -24,13 +24,21 @@ const TableRentals = () => {
   };
 
   const handleChangeRentalStatus = (rentalId, rentalStatus) => {
+    console.log('Changing status:', { rentalId, rentalStatus }); // Debug log
+    
     changeRentalStatus(token, rentalId, rentalStatus)
-      .then(() => {
+      .then((response) => {
+        console.log('Status change response:', response.data); // Debug log
         toast.success("Update Status Success!!!");
         handleGetRentals(token);
       })
       .catch((err) => {
-        console.log(err);
+        console.error('Error changing status:', err);
+        if (err.response) {
+          toast.error(`Error: ${err.response.data.message || 'Failed to update status'}`);
+        } else {
+          toast.error('Network error. Please try again.');
+        }
       });
   };
 

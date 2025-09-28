@@ -5,10 +5,14 @@ const jwt = require('jsonwebtoken')
 
 exports.register = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password, telephone } = req.body
 
         if (!email || !password) {
             return res.status(400).json({ message: 'Email and password are required.' });
+        }
+
+        if (!telephone) {
+            return res.status(400).json({ message: 'Phone number is required.' });
         }
 
         const user = await prisma.user.findFirst({
@@ -23,7 +27,8 @@ exports.register = async (req, res) => {
         await prisma.user.create({
             data: {
                 email: email,
-                password: hashPassword
+                password: hashPassword,
+                telephone: telephone
             }
         });
 
@@ -77,6 +82,7 @@ exports.currentUser = async (req, res) => {
                 id: true,
                 email: true,
                 name: true,
+                telephone: true,
                 role: true
             }
         });

@@ -4,42 +4,64 @@ import { listCarBy } from "../../api/car";
 import ProductCard from "../card/ProductCard";
 import SwiperShowProduct from "../../utils/SwiperShowProduct";
 import { SwiperSlide } from "swiper/react";
+import { motion } from "framer-motion";
+import LoadingSpinner from "../LoadingSpinner";
 
 const BestSeller = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = () => {
+    setLoading(true);
     // ❗️ 2. แก้ไขฟังก์ชันที่เรียกใช้เป็น listCarBy
     // สมมติว่า "ขายดี" คือ "รถปีใหม่ที่สุด"
     listCarBy("year", "desc", 12)
       .then((res) => {
         setData(res.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Failed to load best seller cars:", err);
+        setLoading(false);
       });
   };
 
+  if (loading) {
+    return <LoadingSpinner text="Loading best sellers..." />;
+  }
+
   return (
-    <SwiperShowProduct>
-      {data?.map((item) => (
-        <SwiperSlide key={item.id}>
-          {/* ❗️ 3. แปลงข้อมูล "รถ" ให้ "ProductCard" เข้าใจ */}
-          <ProductCard
-            item={{
-              ...item,
-              title: `${item.brand} ${item.model}`,
-              description: `ทะเบียน: ${item.licensePlate}`,
-              price: item.pricePerDay,
-            }}
-          />
-        </SwiperSlide>
-      ))}
-    </SwiperShowProduct>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <SwiperShowProduct>
+        {data?.map((item, index) => (
+          <SwiperSlide key={item.id}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              {/* ❗️ 3. แปลงข้อมูล "รถ" ให้ "ProductCard" เข้าใจ */}
+              <ProductCard
+                item={{
+                  ...item,
+                  title: `${item.brand} ${item.model}`,
+                  description: `ทะเบียน: ${item.licensePlate}`,
+                  price: item.pricePerDay,
+                }}
+              />
+            </motion.div>
+          </SwiperSlide>
+        ))}
+      </SwiperShowProduct>
+    </motion.div>
   );
 };
 

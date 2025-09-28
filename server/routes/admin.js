@@ -12,21 +12,27 @@ const {
 const { getRentalsAdmin, changeRentalStatus } = require('../controllers/rental');
 
 // --- Dashboard Route ---
-// เส้นทางนี้ถูกต้องแล้ว เพราะเมื่อรวมกันจะได้ /api/admin/stats
+// GET /api/admin/stats
 router.get('/stats', authCheck, adminCheck, getDashboardStats);
 
 
 // --- User Management Routes (Admin only) ---
-// **แก้ไข:** ลบ '/admin' ที่ซ้ำซ้อนออก
+// GET /api/admin/users
 router.get('/users', authCheck, adminCheck, listUsers);
+
+// POST /api/admin/change-status
 router.post('/change-status', authCheck, adminCheck, changeStatus);
+
+// POST /api/admin/change-role
 router.post('/change-role', authCheck, adminCheck, changeRole);
 
 
 // --- Rental Management Routes (Admin only) ---
-// **แก้ไข:** ลบ '/admin' ที่ซ้ำซ้อนออก
+// GET /api/admin/rentals
 router.get('/rentals', authCheck, adminCheck, getRentalsAdmin);
+
+// PUT /api/admin/rental-status
 router.put('/rental-status', authCheck, adminCheck, changeRentalStatus);
 
-module.exports = router;
 
+module.exports = router;

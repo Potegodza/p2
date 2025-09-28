@@ -20,7 +20,8 @@ const useCarRentalStore = create(
       // --- Actions ---
       actionLogin: async (credentials) => {
         try {
-          const response = await axios.post('http://localhost:5001/api/login', credentials);
+          const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+          const response = await axios.post(`${baseURL}/api/login`, credentials);
           const { token, payload } = response.data;
           
           set({ token: token, user: payload });

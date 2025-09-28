@@ -32,3 +32,115 @@ body {
     }
 }
 
+/* เพิ่ม Custom Animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(230, 179, 37, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(230, 179, 37, 0.6);
+    }
+}
+
+@keyframes slide-in-left {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in-up {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Utility classes สำหรับ animation */
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-in-left {
+    animation: slide-in-left 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+    animation: slide-in-right 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Swiper Theme Color - Hide scrollbar but keep functionality */
+:root {
+  --swiper-theme-color: transparent;
+  --swiper-navigation-color: transparent;
+  --swiper-pagination-color: transparent;
+}
+
+/* Hide Swiper pagination dots */
+.swiper-pagination {
+  display: none !important;
+}
+
+/* Hide Swiper navigation arrows */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+/* Keep Swiper functionality but hide visual indicators */
+.swiper {
+  --swiper-theme-color: transparent;
+}
+
+/* Alternative: Make pagination dots invisible but keep clickable area */
+.swiper-pagination-bullet {
+  opacity: 0 !important;
+  background: transparent !important;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 0 !important;
+  background: transparent !important;
+}
+

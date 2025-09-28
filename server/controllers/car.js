@@ -41,7 +41,18 @@ exports.list = async (req, res) => {
         const cars = await prisma.car.findMany({
             take: parseInt(count),
             orderBy: { createdAt: "desc" },
-            include: { images: true }
+            include: { 
+                images: true,
+                rentals: {
+                    where: {
+                        status: {
+                            in: ['Pending', 'Active']
+                        }
+                    },
+                    orderBy: { createdAt: 'desc' },
+                    take: 1
+                }
+            }
         });
         res.json(cars);
     } catch (err) {
@@ -55,8 +66,24 @@ exports.read = async (req, res) => {
         const { id } = req.params;
         const car = await prisma.car.findFirst({
             where: { id: Number(id) },
-            include: { images: true }
+            include: { 
+                images: true,
+                rentals: {
+                    where: {
+                        status: {
+                            in: ['Pending', 'Active']
+                        }
+                    },
+                    orderBy: { createdAt: 'desc' },
+                    take: 1
+                }
+            }
         });
+        
+        if (!car) {
+            return res.status(404).json({ message: 'Car not found' });
+        }
+        
         res.json(car);
     } catch (err) {
         console.error(err);
@@ -194,6 +221,47 @@ exports.removeImage = async (req, res) => {
                 return res.status(500).json({ message: 'Error removing image' });
             }
             res.send('Remove Image Success!!!');
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// ฟังก์ชันสำหรับเปลี่ยนสถานะรถ
+exports.changeCarStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        // ตรวจสอบสถานะที่อนุญาต
+        const allowedStatuses = ['available', 'rented', 'maintenance'];
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({ 
+                message: 'Invalid status. Allowed values: available, rented, maintenance' 
+            });
+        }
+
+        const car = await prisma.car.update({
+            where: { id: Number(id) },
+            data: { status: status },
+            include: { 
+                images: true,
+                rentals: {
+                    where: {
+                        status: {
+                            in: ['Pending', 'Active']
+                        }
+                    },
+                    orderBy: { createdAt: 'desc' },
+                    take: 1
+                }
+            }
+        });
+
+        res.json({ 
+            message: `Car status updated to ${status}`, 
+            car: car 
         });
     } catch (err) {
         console.error(err);

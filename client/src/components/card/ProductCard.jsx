@@ -6,17 +6,33 @@ import { motion } from "framer-motion";
 const ProductCard = ({ item }) => {
   // ดึง action สำหรับเพิ่มรถเข้าตะกร้าเช่าจาก store
   const addCarToRental = useCarRentalStore((state) => state.addCarToRental);
+  
+  // ตรวจสอบสถานะรถ
+  const isAvailable = item.status === 'available';
+  const isRented = item.status === 'rented';
+  const isMaintenance = item.status === 'maintenance';
+  
+  // ตรวจสอบว่ามีการเช่าที่กำลังดำเนินอยู่หรือไม่
+  const hasActiveRental = item.rentals && item.rentals.length > 0;
 
   return (
     // ใช้ Framer Motion เพื่อเพิ่ม Animation ตอนการ์ดปรากฏ
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        duration: 0.5,
+        ease: "easeOut"
+      }}
+      whileHover={{ 
+        scale: 1.05,
+        y: -5,
+        transition: { duration: 0.2 }
+      }}
       className="bg-gray-100/50 rounded-lg shadow-md p-4 flex flex-col h-full"
     >
       {/* ส่วนรูปภาพรถ */}
-      <div className="mb-4">
+      <div className="mb-4 relative">
         {item.images && item.images.length > 0 ? (
           <img
             src={item.images[0].url}
@@ -28,6 +44,37 @@ const ProductCard = ({ item }) => {
             <span className="text-gray-400">No Image</span>
           </div>
         )}
+        
+        {/* Car Status */}
+        <motion.div 
+          className="absolute top-2 right-2"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.3, type: "spring", stiffness: 500 }}
+        >
+          {isRented || hasActiveRental ? (
+            <motion.span 
+              className="bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-md"
+              whileHover={{ scale: 1.1 }}
+            >
+              RENTED
+            </motion.span>
+          ) : isMaintenance ? (
+            <motion.span 
+              className="bg-brand-gold text-brand-dark px-2 py-1 rounded-full text-xs font-semibold shadow-md"
+              whileHover={{ scale: 1.1 }}
+            >
+              MAINTENANCE
+            </motion.span>
+          ) : (
+            <motion.span 
+              className="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-md"
+              whileHover={{ scale: 1.1 }}
+            >
+              AVAILABLE
+            </motion.span>
+          )}
+        </motion.div>
       </div>
 
       {/* ส่วนรายละเอียดรถ */}
@@ -43,16 +90,30 @@ const ProductCard = ({ item }) => {
       </div>
 
       {/* ส่วนปุ่ม */}
-      <div className="grid grid-cols-2 gap-3">
-        <button className="w-full border border-gray-300 text-gray-600 font-semibold py-2 rounded-md hover:bg-gray-200 transition-colors">
-          View Details
-        </button>
-        <button
-          onClick={() => addCarToRental(item)}
-          className="w-full bg-brand-gold text-brand-dark font-bold py-2 rounded-md hover:bg-yellow-500 transition-colors"
-        >
-          Book Now
-        </button>
+      <div className="w-full">
+        {isAvailable && !hasActiveRental ? (
+          <motion.button
+            onClick={() => addCarToRental(item)}
+            className="w-full bg-brand-gold text-brand-dark font-bold py-2 rounded-md hover:bg-yellow-500 transition-colors shadow-md"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            Book Now
+          </motion.button>
+        ) : (
+          <motion.button
+            disabled
+            className="w-full bg-gray-300 text-gray-500 font-bold py-2 rounded-md cursor-not-allowed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            {isRented || hasActiveRental ? 'RENTED' : isMaintenance ? 'MAINTENANCE' : 'UNAVAILABLE'}
+          </motion.button>
+        )}
       </div>
     </motion.div>
   );

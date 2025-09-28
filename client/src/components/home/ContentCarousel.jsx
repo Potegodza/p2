@@ -6,6 +6,7 @@ import axios from "axios";
 import "swiper/css";
 import "swiper/css/pagination";
 import 'swiper/css/navigation';
+import "../../styles/swiper-custom.css";
 // import required modules
 import { Pagination, Autoplay, Navigation } from "swiper/modules";
 
@@ -26,13 +27,17 @@ const ContentCarousel = () => {
   return (
     <div>
       <Swiper
-        pagination={true}
-        modules={[Pagination, Autoplay]}
+        pagination={false} // Disable pagination dots
+        modules={[Autoplay]} // Remove Pagination module
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,
         }}
         className="mySwiper h-80 object-cover rounded-md mb-4"
+        style={{
+          '--swiper-theme-color': 'transparent',
+          '--swiper-pagination-color': 'transparent'
+        }}
       >
         {data?.map((item) => (
           // ❗️ 1. เพิ่ม key={item.id} ตรงนี้
@@ -45,14 +50,19 @@ const ContentCarousel = () => {
       <Swiper
         slidesPerView={5}
         spaceBetween={10}
-        pagination={{ clickable: true }} // ทำให้ pagination คลิกได้
-        navigation={true}
-        modules={[Pagination, Autoplay, Navigation]}
+        pagination={false} // Disable pagination dots
+        navigation={false} // Disable navigation arrows
+        modules={[Autoplay]} // Remove Pagination and Navigation modules
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,
         }}
         className="mySwiper object-cover rounded-md"
+        style={{
+          '--swiper-theme-color': 'transparent',
+          '--swiper-navigation-color': 'transparent',
+          '--swiper-pagination-color': 'transparent'
+        }}
       >
         {data?.map((item) => (
           // ❗️ 2. และเพิ่ม key={item.id} ตรงนี้ด้วย

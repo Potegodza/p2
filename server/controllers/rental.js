@@ -6,6 +6,14 @@ exports.saveRental = async (req, res) => {
         const { carId, startDate, endDate, name, telephone } = req.body;
         const userId = req.user.id;
 
+        // Debug logging
+        console.log("Rental request data:", { carId, startDate, endDate, name, telephone, userId });
+
+        // Check if user is authenticated
+        if (!userId) {
+            return res.status(401).json({ message: "User not authenticated." });
+        }
+
         // --- ✅ NEW: Input Validation ---
         if (!startDate || !endDate || !carId) {
             return res.status(400).json({ message: "Car, start date, and end date are required." });
@@ -48,18 +56,33 @@ exports.saveRental = async (req, res) => {
                 });
             }
 
-            // 3. Calculate rental details.
+            // 3. Calculate rental details with promotion.
             // We use the validated start and end date objects from above
             const diffTime = end.getTime() - start.getTime();
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include the start day
-            const totalPrice = diffDays * car.pricePerDay;
+            
+            // 🎯 PROMOTION: Rent 3 days, get 1 day free (3+1 = 4 days for price of 3)
+            let totalPrice = diffDays * car.pricePerDay;
+            let promotionApplied = false;
+            let freeDays = 0;
+            
+            if (diffDays >= 3) {
+                // Calculate how many free days the customer gets
+                const promotionGroups = Math.floor(diffDays / 3); // How many groups of 3 days
+                freeDays = promotionGroups; // 1 free day per group of 3
+                
+                // Apply promotion: subtract free days from total price
+                const paidDays = diffDays - freeDays;
+                totalPrice = paidDays * car.pricePerDay;
+                promotionApplied = true;
+            }
 
             // --- ✅ NEW: Validate the calculated total price ---
             if (!isFinite(totalPrice) || totalPrice <= 0) {
                 throw new Error("Could not calculate a valid total price.");
             }
 
-            // 4. Create the new rental record.
+            // 4. Create the new rental record with promotion details.
             const rental = await tx.carRental.create({
                 data: {
                     carId: Number(carId),
@@ -68,6 +91,11 @@ exports.saveRental = async (req, res) => {
                     endDate: end,
                     totalPrice: totalPrice,
                     status: 'Pending', // Default status
+                    phoneNumber: telephone, // Store phone number from cart
+                    // Store promotion details for reference
+                    promotionApplied: promotionApplied,
+                    freeDays: freeDays,
+                    originalPrice: diffDays * car.pricePerDay, // Original price without promotion
                 }
             });
             
@@ -80,7 +108,19 @@ exports.saveRental = async (req, res) => {
             return rental;
         });
 
-        res.status(201).json({ message: "Rental created successfully!", rental: newRental });
+        // Return promotion details in response
+        const responseData = {
+            message: "Rental created successfully!",
+            rental: newRental,
+            promotion: {
+                applied: newRental.promotionApplied,
+                freeDays: newRental.freeDays,
+                originalPrice: newRental.originalPrice,
+                savings: newRental.originalPrice - newRental.totalPrice
+            }
+        };
+
+        res.status(201).json(responseData);
     } catch (err) {
         // --- ✅ IMPROVED: More Detailed Error Logging ---
         console.error("--- FULL ERROR OBJECT IN saveRental ---", err);
@@ -149,6 +189,13 @@ exports.getRentalsAdmin = async (req, res) => {
 exports.changeRentalStatus = async (req, res) => {
     try {
         const { rentalId, rentalStatus } = req.body;
+        
+        console.log('Admin changing rental status:', { rentalId, rentalStatus }); // Debug log
+
+        // Validate input
+        if (!rentalId || !rentalStatus) {
+            return res.status(400).json({ message: "Rental ID and status are required" });
+        }
 
         const updatedRental = await prisma.$transaction(async (tx) => {
             // Step 1: Update the rental status
@@ -169,6 +216,7 @@ exports.changeRentalStatus = async (req, res) => {
             return rental;
         });
 
+        console.log('Status updated successfully:', updatedRental); // Debug log
         res.json(updatedRental);
     } catch (err) {
         console.error("Error changing rental status:", err);

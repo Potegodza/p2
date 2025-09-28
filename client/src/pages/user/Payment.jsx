@@ -15,8 +15,9 @@ const Payment = () => {
   const token = useCarRentalStore((s) => s.token);
   const [clientSecret, setClientSecret] = useState("");
   
-  // Get total price from the navigation state sent from Cart.jsx
+  // Get total price and phone number from the navigation state sent from Cart.jsx
   const totalPrice = location.state?.totalPrice;
+  const phoneNumber = location.state?.phoneNumber;
 
   useEffect(() => {
     // Redirect back to cart if there's no price to pay
@@ -50,7 +51,7 @@ const Payment = () => {
         
         {clientSecret ? (
           <Elements options={{ clientSecret, appearance, loader }} stripe={stripePromise}>
-            <CheckoutForm />
+            <CheckoutForm phoneNumber={phoneNumber} />
           </Elements>
         ) : (
           <p className="text-center">Loading payment form...</p>

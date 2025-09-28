@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 
 // Layouts
 import Layout from '../layouts/Layout';
@@ -23,12 +24,18 @@ import ManageUsers from '../pages/admin/ManageUsers';
 import ManageCars from '../pages/admin/Cars'; 
 import EditCar from '../pages/admin/EditCar';
 import ManageRentals from '../pages/admin/ManageRentals';
+import Analytics from '../pages/admin/Analytics';
+import Reports from '../pages/admin/Reports';
+import Settings from '../pages/admin/Settings';
 
 
 // User Pages
 import UserDashboard from '../pages/user/HomeUser';
-import RentalHistory from '../pages/user/History';
+import RentalHistory from '../pages/user/RentalHistory';
 import Payment from '../pages/user/Payment';
+
+// Logo Showcase
+import LogoShowcase from '../components/LogoShowcase';
 
 const router = createBrowserRouter([
     {
@@ -40,6 +47,7 @@ const router = createBrowserRouter([
             { path: 'login', element: <Login /> },
             { path: 'register', element: <Register /> },
             { path: 'cart', element: <Cart /> },
+            { path: 'logo-showcase', element: <LogoShowcase /> },
         ]
     },
     {
@@ -51,6 +59,9 @@ const router = createBrowserRouter([
             { path: 'cars', element: <ManageCars /> },
             { path: 'cars/:id', element: <EditCar /> },
             { path: 'rentals', element: <ManageRentals /> },
+            { path: 'analytics', element: <Analytics /> },
+            { path: 'reports', element: <Reports /> },
+            { path: 'settings', element: <Settings /> },
         ]
     },
     {

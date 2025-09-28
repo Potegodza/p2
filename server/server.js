@@ -11,19 +11,24 @@ app.use(express.json({ limit: '20mb' }));
 app.use(cors());
 
 // --- Routes ---
-// **แก้ไข:** นำการโหลด Route อัตโนมัติที่ซ้ำซ้อนออกไป
-// และกำหนด Route อย่างชัดเจน
+// นำเข้าไฟล์ Route ต่างๆ
 const adminRoutes = require('./routes/admin');
-const authRoutes = require('./routes/auth'); // **เพิ่ม:** นำเข้าไฟล์ Route สำหรับการยืนยันตัวตน
+const authRoutes = require('./routes/auth');
+const carRoutes = require('./routes/car');
+const userRoutes = require('./routes/user');
+const stripeRoutes = require('./routes/stripe');
 
-// เพิ่ม Routes อื่นๆ ที่นี่ถ้ามี เช่น const userRoutes = require('./routes/user');
+// --- กำหนด Prefix ของ Route ---
+// **จุดที่แก้ไข:** กำหนด Prefix สำหรับ admin routes ให้ถูกต้อง
+app.use('/api/admin', adminRoutes); // ทุก Route ใน admin.js จะขึ้นต้นด้วย /api/admin
 
-// **แก้ไข:** กำหนด Prefix ของ Route ให้ถูกต้อง
-app.use('/api', adminRoutes); // ทุก Route ใน admin.js จะมี /api นำหน้า
-app.use('/api', authRoutes); // **เพิ่ม:** ใช้งาน Route สำหรับการยืนยันตัวตน
-// app.use('/api', userRoutes);
+// (สมมติว่า auth routes ของคุณขึ้นต้นด้วย /api เช่น /api/register, /api/login)
+app.use('/api', authRoutes);
+app.use('/api', carRoutes);
+app.use('/api', userRoutes);
+app.use('/api', stripeRoutes);
+
 
 // Start Server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-

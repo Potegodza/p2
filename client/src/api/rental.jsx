@@ -28,8 +28,8 @@ export const changeRentalStatus = async (token, rentalId, status) => {
   return axios.put(
     "http://localhost:5001/api/admin/rental-status",
     {
-      rentalId,
-      status,
+      rentalId: rentalId,
+      rentalStatus: status,
     },
     {
       headers: {

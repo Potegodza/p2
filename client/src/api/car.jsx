@@ -77,3 +77,14 @@ export const listCarBy = async (sort, order, limit) => {
     limit,
   });
 };
+
+export const changeCarStatus = async (token, id, status) => {
+  return axios.put(`http://localhost:5001/api/car/${id}/status`, 
+    { status },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

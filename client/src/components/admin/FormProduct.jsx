@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import useCarRentalStore from '../../store/carRentalStore';
-import { createCar, deleteCar, listCar } from '../../api/car';
+import { createCar, deleteCar, listCar, changeCarStatus } from '../../api/car';
 import { toast } from 'react-toastify';
 import Uploadfile from './Uploadfile';
 import { Link } from 'react-router-dom';
@@ -62,6 +62,17 @@ const FormCar = () => {
     }
   };
 
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await changeCarStatus(token, id, newStatus);
+      toast.success(`Car status updated to ${newStatus === 'available' ? 'AVAILABLE' : newStatus === 'rented' ? 'RENTED' : 'MAINTENANCE'} successfully`);
+      getCar();
+    } catch (err) {
+      console.error(err);
+      toast.error('Error updating car status');
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 bg-white shadow-md rounded-lg">
       <form onSubmit={handleSubmit} className="mb-8">
@@ -117,18 +128,19 @@ const FormCar = () => {
       </form>
 
       <hr className="my-8" />
-      <h2 className="text-xl font-bold mb-4">รายการรถยนต์ทั้งหมด</h2>
+      <h2 className="text-xl font-bold mb-4">All Cars</h2>
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse">
           <thead>
             <tr className="bg-gray-200 border">
               <th className="px-4 py-2">#</th>
-              <th className="px-4 py-2">รูปภาพ</th>
-              <th className="px-4 py-2">ยี่ห้อ/รุ่น</th>
-              <th className="px-4 py-2">ทะเบียน</th>
-              <th className="px-4 py-2">ราคา/วัน</th>
-              <th className="px-4 py-2">อัปเดตล่าสุด</th>
-              <th className="px-4 py-2">จัดการ</th>
+              <th className="px-4 py-2">Image</th>
+              <th className="px-4 py-2">Brand/Model</th>
+              <th className="px-4 py-2">License Plate</th>
+              <th className="px-4 py-2">Price/Day</th>
+              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Last Updated</th>
+              <th className="px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -138,7 +150,7 @@ const FormCar = () => {
                 <td className="px-4 py-2">
                   <img
                     className="w-24 h-16 rounded-lg shadow-md object-cover"
-                    src={item.images.length > 0 ? item.images[0].url : 'https://via.placeholder.com/150'}
+                    src={item.images.length > 0 ? item.images[0].url : '/car-placeholder.svg'}
                     alt={`${item.brand} ${item.model}`}
                   />
                 </td>
@@ -148,6 +160,19 @@ const FormCar = () => {
                 </td>
                 <td className="px-4 py-2 text-center">{item.licensePlate}</td>
                 <td className="px-4 py-2 text-right">{numberFormat(item.pricePerDay)}</td>
+                <td className="px-4 py-2 text-center">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                    item.status === 'available' 
+                      ? 'bg-green-100 text-green-800 border border-green-200' 
+                      : item.status === 'rented' 
+                      ? 'bg-red-100 text-red-800 border border-red-200' 
+                      : 'bg-brand-gold text-brand-dark border border-yellow-200'
+                  }`}>
+                    {item.status === 'available' ? 'AVAILABLE' : 
+                     item.status === 'rented' ? 'RENTED' : 
+                     item.status === 'maintenance' ? 'MAINTENANCE' : item.status.toUpperCase()}
+                  </span>
+                </td>
                 <td className="px-4 py-2 text-center">{dateFormat(item.updatedAt)}</td>
                 <td className="px-4 py-2 flex gap-2 justify-center items-center">
                   {/* ❗️❗️ แก้ไข to=... ใน Link นี้ */}
@@ -157,6 +182,35 @@ const FormCar = () => {
                   >
                     <Pencil size={16}/>
                   </Link>
+                  
+                  {/* Status Change Buttons */}
+                  <div className="flex flex-col gap-1">
+                    {item.status !== 'available' && (
+                      <button
+                        onClick={() => handleStatusChange(item.id, 'available')}
+                        className="bg-green-600 rounded-md px-2 py-1 text-white text-xs hover:bg-green-700 shadow-md transition-colors"
+                      >
+                        AVAILABLE
+                      </button>
+                    )}
+                    {item.status !== 'rented' && (
+                      <button
+                        onClick={() => handleStatusChange(item.id, 'rented')}
+                        className="bg-red-600 rounded-md px-2 py-1 text-white text-xs hover:bg-red-700 shadow-md transition-colors"
+                      >
+                        RENTED
+                      </button>
+                    )}
+                    {item.status !== 'maintenance' && (
+                      <button
+                        onClick={() => handleStatusChange(item.id, 'maintenance')}
+                        className="bg-brand-gold text-brand-dark rounded-md px-2 py-1 text-xs hover:bg-yellow-400 shadow-md transition-colors font-semibold"
+                      >
+                        MAINTENANCE
+                      </button>
+                    )}
+                  </div>
+                  
                   <button
                     className="bg-red-500 rounded-md p-2 text-white shadow-md hover:bg-red-600"
                     onClick={() => handleDelete(item.id)}

@@ -5,15 +5,13 @@ import useCarRentalStore from "../store/carRentalStore";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { createRental } from "../api/user";
-import { loadStripe } from "@stripe/stripe-js";
 
-export default function CheckoutForm() {
+export default function CheckoutForm({ phoneNumber }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
-  const stripePromise = loadStripe("pk_test_51SADW1FbsCq9ERXq29ezSHWHEOjSrAJReZ1A5johDbG53OoUdIx1A9Gr8HUhH8nBc0ivyhMuBr07x4GSmiOnS3Bx00lDWFPQm1");
 
-  const { token, user, rentals, startDate, endDate, clearRentals } = useCarRentalStore();
+  const { token, user, rentals, startDate, endDate, clearRentals, calculateTotalPrice } = useCarRentalStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -21,6 +19,13 @@ export default function CheckoutForm() {
     if (!stripe || !elements) {
       return;
     }
+
+    // Validate phone number
+    if (!phoneNumber || phoneNumber.trim() === '') {
+      toast.error('Phone number is required. Please go back to cart and enter your phone number.');
+      return;
+    }
+
     setIsLoading(true);
 
     // ✅ Step 1: Trigger form validation and collect data
@@ -51,11 +56,12 @@ export default function CheckoutForm() {
         const rentalPromises = rentals.map(car => {
           const rentalData = {
             carId: car.id,
-            startDate,
-            endDate,
+            startDate: startDate instanceof Date ? startDate.toISOString() : startDate,
+            endDate: endDate instanceof Date ? endDate.toISOString() : endDate,
             name: user.name,
-            telephone: user.telephone
+            telephone: phoneNumber
           };
+          console.log("Sending rental data:", rentalData); // Debug log
           return createRental(token, rentalData);
         });
         
@@ -79,6 +85,14 @@ export default function CheckoutForm() {
 
   return (
     <form id="payment-form" className="stripe-form" onSubmit={handleSubmit}>
+      {/* Display Phone Number */}
+      <div className="mb-6 p-3 bg-gray-50 rounded-md">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Phone Number
+        </label>
+        <span className="text-sm text-gray-600">{phoneNumber}</span>
+      </div>
+
       <PaymentElement id="payment-element" options={paymentElementOptions} />
       <button disabled={isLoading || !stripe || !elements} id="submit" className="stripe-button mt-4">
         <span id="button-text">

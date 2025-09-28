@@ -41,6 +41,12 @@ model CarRental {
   endDate    DateTime
   totalPrice Float
   status     String   @default("Pending") // สถานะ: Pending, Active, Completed, Cancelled
+  phoneNumber String? // เบอร์โทรที่ใส่ในหน้า cart
+  
+  // 🎯 PROMOTION FIELDS
+  promotionApplied Boolean @default(false) // ใช้โปรโมชั่นหรือไม่
+  freeDays         Int?    // จำนวนวันที่ได้ฟรี
+  originalPrice     Float?  // ราคาเดิมก่อนโปรโมชั่น
   
   renter     User     @relation(fields: [renterId], references: [id])
   renterId   Int

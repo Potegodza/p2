@@ -6,6 +6,7 @@ import axios from "axios";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import "../styles/swiper-custom.css";
 // import required modules
 import { Pagination, Autoplay, Navigation } from "swiper/modules";
 
@@ -14,9 +15,9 @@ const SwiperShowProduct = ({ children }) => {
     <Swiper
       slidesPerView={5}
       spaceBetween={10}
-      pagination={true}
-      navigation={true}
-      modules={[Pagination, Autoplay, Navigation]}
+      pagination={false} // Disable pagination dots
+      navigation={false} // Disable navigation arrows
+      modules={[Autoplay]} // Remove Pagination and Navigation modules
       autoplay={{
         delay: 2500,
         disableOnInteraction: false,
@@ -44,6 +45,11 @@ const SwiperShowProduct = ({ children }) => {
        },
       }}
       className="mySwiper object-cover rounded-md"
+      style={{
+        '--swiper-theme-color': 'transparent',
+        '--swiper-navigation-color': 'transparent',
+        '--swiper-pagination-color': 'transparent'
+      }}
     >
       {children}
     </Swiper>

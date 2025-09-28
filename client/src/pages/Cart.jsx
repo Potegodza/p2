@@ -3,6 +3,7 @@ import useCarRentalStore from '../store/carRentalStore';
 import { useNavigate } from 'react-router-dom';
 import { numberFormat } from '../utils/number';
 import { toast } from 'react-toastify';
+import PromotionBanner from '../components/PromotionBanner';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -19,8 +20,31 @@ const Cart = () => {
 
   const [localStartDate, setLocalStartDate] = React.useState(startDate || '');
   const [localEndDate, setLocalEndDate] = React.useState(endDate || '');
+  const [phoneNumber, setPhoneNumber] = React.useState(user?.telephone || '');
   const [totalPrice, setTotalPrice] = React.useState(0);
   const [days, setDays] = React.useState(0);
+  
+  // 🎯 PROMOTION CALCULATION
+  const calculatePromotion = () => {
+    if (days < 3) return null;
+    
+    const originalPrice = totalPrice;
+    const promotionGroups = Math.floor(days / 3);
+    const freeDays = promotionGroups;
+    const paidDays = days - freeDays;
+    const discountedPrice = (totalPrice / days) * paidDays;
+    const savings = originalPrice - discountedPrice;
+    
+    return {
+      applied: true,
+      freeDays,
+      originalPrice,
+      discountedPrice,
+      savings
+    };
+  };
+  
+  const promotion = calculatePromotion();
 
   React.useEffect(() => {
     if (localStartDate && localEndDate) {
@@ -56,8 +80,11 @@ const Cart = () => {
     if (rentals.length === 0 || !startDate || !endDate || totalPrice <= 0) {
       return toast.warn("กรุณากรอกข้อมูลการเช่าให้ครบถ้วน");
     }
-    // Navigate to the payment page, passing the total price in the state
-    navigate('/user/payment', { state: { totalPrice: totalPrice } });
+    if (!phoneNumber || phoneNumber.trim() === '') {
+      return toast.warn("กรุณาใส่เบอร์โทรศัพท์");
+    }
+    // Navigate to the payment page, passing the total price and phone number in the state
+    navigate('/user/payment', { state: { totalPrice: totalPrice, phoneNumber: phoneNumber } });
   };
 
   if (rentals.length === 0) {
@@ -89,7 +116,7 @@ const Cart = () => {
             <div key={car.id} className="flex items-center hover:bg-gray-50 -mx-8 px-6 py-5">
               <div className="flex w-2/5">
                 <div className="w-20">
-                  <img className="h-24 w-full object-cover rounded" src={car.images[0]?.url || 'https://via.placeholder.com/150'} alt={car.brand} />
+                  <img className="h-24 w-full object-cover rounded" src={car.images[0]?.url || '/car-placeholder.svg'} alt={car.brand} />
                 </div>
                 <div className="flex flex-col justify-between ml-4 flex-grow">
                   <span className="font-bold text-sm">{`${car.brand} ${car.model}`}</span>
@@ -120,6 +147,29 @@ const Cart = () => {
             <label className="font-medium inline-block mb-3 text-sm uppercase">End Date</label>
             <input type="date" value={localEndDate} onChange={e => setLocalEndDate(e.target.value)} className="p-2 text-sm w-full border rounded" />
           </div>
+          
+          {/* 🎯 PROMOTION BANNER */}
+          {promotion && (
+            <div className="mt-4">
+              <PromotionBanner
+                rentalDays={days}
+                originalPrice={promotion.originalPrice}
+                discountedPrice={promotion.discountedPrice}
+                freeDays={promotion.freeDays}
+                savings={promotion.savings}
+              />
+            </div>
+          )}
+          <div className="mt-4">
+            <label className="font-medium inline-block mb-3 text-sm uppercase">Phone Number</label>
+            <input 
+              type="tel" 
+              value={phoneNumber} 
+              onChange={e => setPhoneNumber(e.target.value)} 
+              placeholder="Enter your phone number"
+              className="p-2 text-sm w-full border rounded focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold" 
+            />
+          </div>
           <div className="border-t mt-8">
             <div className="flex justify-between py-4 text-sm">
               <span>Daily Total</span>
@@ -129,10 +179,29 @@ const Cart = () => {
               <span>Rental Days</span>
               <span>{days} Day(s)</span>
             </div>
-            <div className="flex font-semibold justify-between py-6 text-lg uppercase">
-              <span>Total Price</span>
-              <span>{numberFormat(totalPrice)}฿</span>
-            </div>
+            
+            {/* 🎯 PROMOTION PRICE BREAKDOWN */}
+            {promotion ? (
+              <>
+                <div className="flex justify-between py-2 text-sm text-gray-600">
+                  <span>Original Price</span>
+                  <span className="line-through">{numberFormat(promotion.originalPrice)}฿</span>
+                </div>
+                <div className="flex justify-between py-2 text-sm text-green-600">
+                  <span>Promotion Discount</span>
+                  <span>-{numberFormat(promotion.savings)}฿</span>
+                </div>
+                <div className="flex font-semibold justify-between py-4 text-lg uppercase border-t">
+                  <span>Total Price</span>
+                  <span className="text-green-600">{numberFormat(promotion.discountedPrice)}฿</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex font-semibold justify-between py-6 text-lg uppercase">
+                <span>Total Price</span>
+                <span>{numberFormat(totalPrice)}฿</span>
+              </div>
+            )}
             <button onClick={handleProceedToPayment} className="bg-brand-dark text-white font-bold hover:bg-gray-800 py-3 text-sm uppercase w-full rounded-md">
               Proceed to Payment
             </button>

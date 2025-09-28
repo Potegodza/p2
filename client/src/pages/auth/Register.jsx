@@ -12,6 +12,7 @@ const registerSchema = z
     email: z.string().email({ message: "Invalid email!!!" }),
     password: z.string().min(8, { message: "Password ต้องมากกว่า 8 ตัวอักษร" }),
     confirmPassword: z.string(),
+    telephone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password มันบ่ตรงกันเด้อ",
@@ -136,9 +137,24 @@ const Register = () => {
                 `}
                 />
 
-
               {errors.confirmPassword && (
                 <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                {...register("telephone")}
+                placeholder="Phone Number"
+                type="tel"
+                className={`border w-full px-3 py-2 rounded
+                  focus:outline-none focus:ring-2 focus:ring-blue-500
+                  focus:border-transparent
+                  ${errors.telephone && "border-red-500"}
+                  `}
+              />
+              {errors.telephone && (
+                <p className="text-red-500 text-sm">{errors.telephone.message}</p>
               )}
             </div>
 

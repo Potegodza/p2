@@ -10,10 +10,12 @@ const {
     searchFilters,
     createImages,
     removeImage,
-    listBy
+    listBy,
+    changeCarStatus
 } = require('../controllers/car');
 
 // === Public Routes === (ทุกคนเข้าถึงได้)
+// ✅ FIX: Changed '/cars/:count' to handle the parameter correctly
 router.get('/cars/:count', list);
 router.get('/car/:id', read);
 router.post('/search/filters', searchFilters);
@@ -25,5 +27,6 @@ router.put('/car/:id', authCheck, adminCheck, update);
 router.delete('/car/:id', authCheck, adminCheck, remove);
 router.post('/images', authCheck, adminCheck, createImages);
 router.post('/removeimages', authCheck, adminCheck, removeImage);
+router.put('/car/:id/status', authCheck, adminCheck, changeCarStatus);
 
 module.exports = router;
