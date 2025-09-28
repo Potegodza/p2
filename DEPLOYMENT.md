@@ -5,7 +5,7 @@ This guide will help you deploy your Car Rental application to production using 
 ## 📋 Prerequisites
 
 - GitHub account
-- Render account (for backend)
+- Railway account (for frontend and backend)
 - Database service (PlanetScale/Supabase)
 - Cloudinary account (for image storage)
 - Stripe account (for payments)
@@ -15,14 +15,14 @@ This guide will help you deploy your Car Rental application to production using 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend       │    │   Database      │
-│   (GitHub Pages)│◄──►│   (Render)      │◄──►│   (PlanetScale) │
+│   (Railway)     │◄──►│   (Railway)     │◄──►│   (PlanetScale) │
 │   React + Vite  │    │   Node.js + API │    │   MySQL         │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   CDN           │    │   File Storage  │    │   Monitoring    │
-│   (GitHub CDN)  │    │   (Cloudinary) │    │   (Render)      │
+│   (Railway CDN) │    │   (Cloudinary) │    │   (Railway)     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -62,7 +62,7 @@ This guide will help you deploy your Car Rental application to production using 
    }
    ```
 
-## 🎨 Frontend Deployment (GitHub Pages)
+## 🎨 Frontend Deployment (Railway)
 
 ### 1. Prepare Frontend
 
@@ -72,38 +72,45 @@ npm install
 npm run build
 ```
 
-### 2. Deploy to GitHub Pages
+### 2. Deploy to Railway
 
-#### Method A: GitHub Actions (Automated)
-The project includes GitHub Actions workflow that automatically deploys to GitHub Pages when you push to main branch.
+#### Method A: Railway Dashboard
+1. Go to [railway.app](https://railway.app)
+2. Sign up/Login with GitHub
+3. Click "New Project" → "Deploy from GitHub repo"
+4. Connect your GitHub repository
+5. Set configuration for frontend:
+   - **Name**: `car-rental-frontend`
+   - **Root Directory**: `client`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm run preview`
 
-#### Method B: Manual Deploy
+#### Method B: Railway CLI
 ```bash
-# Install gh-pages
-cd client
-npm install --save-dev gh-pages
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login
+railway login
+
+# Initialize project
+railway init
 
 # Deploy
-npm run deploy
+railway up
 ```
 
-### 3. Enable GitHub Pages
+### 3. Environment Variables (Railway Frontend)
 
-1. Go to your GitHub repository
-2. Click **Settings** → **Pages**
-3. Under **Source**, select **GitHub Actions**
-4. Your site will be available at: `https://potegodza.github.io/p2`
-
-### 4. Environment Variables
-
-Set these in GitHub repository secrets:
+Set these in Railway dashboard:
 
 ```env
-VITE_API_URL=https://your-backend-url.onrender.com
+VITE_API_URL=https://your-backend-url.railway.app
 VITE_STRIPE_PUBLISHABLE_KEY=pk_live_your_stripe_key
+PORT=3000
 ```
 
-## ⚙️ Backend Deployment (Render)
+## ⚙️ Backend Deployment (Railway)
 
 ### 1. Prepare Backend
 
@@ -112,35 +119,36 @@ cd server
 npm install
 ```
 
-### 2. Deploy to Render
+### 2. Deploy to Railway
 
-#### Method A: Render Dashboard
-1. Go to [render.com](https://render.com)
+#### Method A: Railway Dashboard
+1. Go to [railway.app](https://railway.app)
 2. Sign up/Login with GitHub
-3. Click "New +" → "Web Service"
+3. Click "New Project" → "Deploy from GitHub repo"
 4. Connect your GitHub repository
 5. Set configuration:
-   - **Name**: `car-rental-backend`
    - **Root Directory**: `server`
    - **Build Command**: `npm install && npx prisma generate`
    - **Start Command**: `npm start`
-   - **Node Version**: `18`
 
-#### Method B: Render CLI (Optional)
+#### Method B: Railway CLI
 ```bash
-# Install Render CLI
-npm install -g @render/cli
+# Install Railway CLI
+npm install -g @railway/cli
 
 # Login
-render login
+railway login
+
+# Initialize project
+railway init
 
 # Deploy
-render deploy
+railway up
 ```
 
-### 3. Environment Variables (Render)
+### 3. Environment Variables (Railway)
 
-Set these in Render dashboard:
+Set these in Railway dashboard:
 
 ```env
 DATABASE_URL=mysql://username:password@host:port/database
@@ -189,8 +197,8 @@ PORT=5001
 The project includes GitHub Actions workflow (`.github/workflows/deploy.yml`) that:
 
 1. **Runs Tests** on every push/PR
-2. **Deploys Frontend** to GitHub Pages on main branch
-3. **Deploys Backend** to Render on main branch
+2. **Deploys Frontend** to Railway on main branch
+3. **Deploys Backend** to Railway on main branch
 
 ### Manual Deployment Commands
 
@@ -198,34 +206,34 @@ The project includes GitHub Actions workflow (`.github/workflows/deploy.yml`) th
 # Frontend
 cd client
 npm run build
-npm run deploy
+railway up
 
 # Backend
 cd server
-render deploy
+railway up
 ```
 
 ## 🔍 Health Checks
 
 ### Frontend Health Check
-- URL: `https://potegodza.github.io/p2`
+- URL: `https://your-frontend-url.railway.app`
 - Should return React app
 
 ### Backend Health Check
-- URL: `https://your-backend.onrender.com/api/health`
+- URL: `https://your-backend.railway.app/api/health`
 - Should return: `{"status": "ok"}`
 
 ## 📊 Monitoring
 
-### Render Monitoring
-- Logs: Available in Render dashboard
+### Railway Monitoring
+- Logs: Available in Railway dashboard
 - Metrics: CPU, Memory, Network
-- Alerts: Configure in Render settings
+- Alerts: Configure in Railway settings
 
-### GitHub Pages Monitoring
-- Analytics: Available in GitHub repository insights
-- Performance: Built-in GitHub CDN
-- Logs: Available in GitHub Actions
+### Railway Frontend Monitoring
+- Logs: Available in Railway dashboard
+- Performance: Built-in Railway CDN
+- Analytics: Available in Railway metrics
 
 ## 🔒 Security Checklist
 

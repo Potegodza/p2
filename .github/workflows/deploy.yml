@@ -52,12 +52,12 @@ jobs:
     - name: Build frontend
       run: cd client && npm run build
     
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Deploy to Railway (Frontend)
+      uses: railwayapp/railway-deploy@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./client/dist
-        cname: ${{ secrets.CNAME }}
+        railway-token: ${{ secrets.RAILWAY_TOKEN }}
+        service: car-rental-frontend
+        working-directory: ./client
 
   deploy-backend:
     needs: test
@@ -76,8 +76,9 @@ jobs:
     - name: Install dependencies
       run: cd server && npm ci
     
-    - name: Deploy to Render
-      uses: johnbeynon/render-deploy-action@v0.0.8
+    - name: Deploy to Railway
+      uses: railwayapp/railway-deploy@v1
       with:
-        service-id: ${{ secrets.RENDER_SERVICE_ID }}
-        api-key: ${{ secrets.RENDER_API_KEY }}
+        railway-token: ${{ secrets.RAILWAY_TOKEN }}
+        service: car-rental-backend
+        working-directory: ./server
