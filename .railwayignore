@@ -1,4 +1,7 @@
-# Documentation files (exclude from Railway deployment)
+# Force Railway to use Dockerfile instead of nixpacks
+.nixpacks/
+
+# Documentation files
 README.txt
 README_install_command.txt
 STARTUP_GUIDE.md
@@ -10,6 +13,7 @@ RAILWAY_DEPLOY.md
 .github/
 .gitignore
 .railwayignore
+.dockerignore
 
 # Test files
 coverage/
