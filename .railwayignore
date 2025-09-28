@@ -2,6 +2,8 @@
 README.txt
 README_install_command.txt
 STARTUP_GUIDE.md
+DEPLOYMENT.md
+RAILWAY_DEPLOY.md
 
 # Development files
 .git/
@@ -12,6 +14,11 @@ STARTUP_GUIDE.md
 # Test files
 coverage/
 test-results/
+__tests__/
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
 
 # Development dependencies
 node_modules/
@@ -39,3 +46,13 @@ yarn-error.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
