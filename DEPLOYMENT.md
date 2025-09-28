@@ -5,7 +5,6 @@ This guide will help you deploy your Car Rental application to production using 
 ## 📋 Prerequisites
 
 - GitHub account
-- Vercel account (for frontend)
 - Render account (for backend)
 - Database service (PlanetScale/Supabase)
 - Cloudinary account (for image storage)
@@ -16,14 +15,14 @@ This guide will help you deploy your Car Rental application to production using 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend       │    │   Database      │
-│   (Vercel)      │◄──►│   (Render)      │◄──►│   (PlanetScale) │
+│   (GitHub Pages)│◄──►│   (Render)      │◄──►│   (PlanetScale) │
 │   React + Vite  │    │   Node.js + API │    │   MySQL         │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   CDN           │    │   File Storage  │    │   Monitoring    │
-│   (Vercel CDN)  │    │   (Cloudinary) │    │   (Render)      │
+│   (GitHub CDN)  │    │   (Cloudinary) │    │   (Render)      │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -63,40 +62,41 @@ This guide will help you deploy your Car Rental application to production using 
    }
    ```
 
-## 🎨 Frontend Deployment (Vercel)
+## 🎨 Frontend Deployment (GitHub Pages)
 
 ### 1. Prepare Frontend
 
 ```bash
 cd client
+npm install
 npm run build
 ```
 
-### 2. Deploy to Vercel
+### 2. Deploy to GitHub Pages
 
-#### Method A: Vercel CLI
+#### Method A: GitHub Actions (Automated)
+The project includes GitHub Actions workflow that automatically deploys to GitHub Pages when you push to main branch.
+
+#### Method B: Manual Deploy
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Login to Vercel
-vercel login
+# Install gh-pages
+cd client
+npm install --save-dev gh-pages
 
 # Deploy
-vercel --prod
+npm run deploy
 ```
 
-#### Method B: GitHub Integration
-1. Connect GitHub repo to Vercel
-2. Set build settings:
-   - **Framework Preset**: Vite
-   - **Root Directory**: `client`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
+### 3. Enable GitHub Pages
 
-### 3. Environment Variables (Vercel)
+1. Go to your GitHub repository
+2. Click **Settings** → **Pages**
+3. Under **Source**, select **GitHub Actions**
+4. Your site will be available at: `https://potegodza.github.io/p2`
 
-Set these in Vercel dashboard:
+### 4. Environment Variables
+
+Set these in GitHub repository secrets:
 
 ```env
 VITE_API_URL=https://your-backend-url.onrender.com
@@ -189,7 +189,7 @@ PORT=5001
 The project includes GitHub Actions workflow (`.github/workflows/deploy.yml`) that:
 
 1. **Runs Tests** on every push/PR
-2. **Deploys Frontend** to Vercel on main branch
+2. **Deploys Frontend** to GitHub Pages on main branch
 3. **Deploys Backend** to Render on main branch
 
 ### Manual Deployment Commands
@@ -198,7 +198,7 @@ The project includes GitHub Actions workflow (`.github/workflows/deploy.yml`) th
 # Frontend
 cd client
 npm run build
-vercel --prod
+npm run deploy
 
 # Backend
 cd server
@@ -208,7 +208,7 @@ render deploy
 ## 🔍 Health Checks
 
 ### Frontend Health Check
-- URL: `https://your-app.vercel.app`
+- URL: `https://potegodza.github.io/p2`
 - Should return React app
 
 ### Backend Health Check
@@ -222,10 +222,10 @@ render deploy
 - Metrics: CPU, Memory, Network
 - Alerts: Configure in Render settings
 
-### Vercel Monitoring
-- Analytics: Available in Vercel dashboard
-- Performance: Core Web Vitals
-- Functions: Serverless function logs
+### GitHub Pages Monitoring
+- Analytics: Available in GitHub repository insights
+- Performance: Built-in GitHub CDN
+- Logs: Available in GitHub Actions
 
 ## 🔒 Security Checklist
 

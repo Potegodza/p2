@@ -52,13 +52,12 @@ jobs:
     - name: Build frontend
       run: cd client && npm run build
     
-    - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v25
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: ./client
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./client/dist
+        cname: ${{ secrets.CNAME }}
 
   deploy-backend:
     needs: test
