@@ -33,6 +33,9 @@ const carRoutes = require('./routes/car');
 const userRoutes = require('./routes/user');
 const stripeRoutes = require('./routes/stripe');
 
+// Error handling middleware
+const errorHandler = require('./middlewares/errorHandler');
+
 // --- กำหนด Prefix ของ Route ---
 // **จุดที่แก้ไข:** กำหนด Prefix สำหรับ admin routes ให้ถูกต้อง
 app.use('/api/admin', adminRoutes); // ทุก Route ใน admin.js จะขึ้นต้นด้วย /api/admin
@@ -56,6 +59,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
 // Start Server
 const PORT = process.env.PORT || 5001;

@@ -38,8 +38,10 @@ exports.create = async (req, res) => {
 exports.list = async (req, res) => {
     try {
         const { count } = req.params;
+        const countValue = parseInt(count) || 20;
+        
         const cars = await prisma.car.findMany({
-            take: parseInt(count),
+            take: countValue,
             orderBy: { createdAt: "desc" },
             include: { 
                 images: true,
@@ -56,8 +58,11 @@ exports.list = async (req, res) => {
         });
         res.json(cars);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Server error" });
+        console.error('Error in list:', err);
+        res.status(500).json({ 
+            message: "Server error",
+            error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+        });
     }
 };
 
@@ -187,15 +192,50 @@ exports.searchFilters = async (req, res) => {
 exports.listBy = async (req, res) => {
     try {
         const { sort, order, limit } = req.body;
+        
+        // ✅ Validate input parameters
+        const allowedSortFields = ['id', 'brand', 'model', 'year', 'pricePerDay', 'createdAt', 'updatedAt'];
+        const allowedOrders = ['asc', 'desc'];
+        
+        if (!sort || !allowedSortFields.includes(sort)) {
+            return res.status(400).json({ 
+                message: 'Invalid sort field. Allowed fields: ' + allowedSortFields.join(', ') 
+            });
+        }
+        
+        if (!order || !allowedOrders.includes(order.toLowerCase())) {
+            return res.status(400).json({ 
+                message: 'Invalid order. Allowed values: asc, desc' 
+            });
+        }
+        
+        const limitValue = Number(limit) || 10;
+        const orderValue = order.toLowerCase();
+        
         const cars = await prisma.car.findMany({
-            take: Number(limit),
-            orderBy: { [sort]: order },
-            include: { images: true }
+            take: limitValue,
+            orderBy: { [sort]: orderValue },
+            include: { 
+                images: true,
+                rentals: {
+                    where: {
+                        status: {
+                            in: ['Pending', 'Active']
+                        }
+                    },
+                    orderBy: { createdAt: 'desc' },
+                    take: 1
+                }
+            }
         });
+        
         res.json(cars);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Server error" });
+        console.error('Error in listBy:', err);
+        res.status(500).json({ 
+            message: "Server error",
+            error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+        });
     }
 };
 
