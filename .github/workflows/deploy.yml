@@ -32,33 +32,6 @@ jobs:
       run: |
         cd server && npm test
 
-  deploy-frontend:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: cd client && npm ci
-    
-    - name: Build frontend
-      run: cd client && npm run build
-    
-    - name: Deploy to Railway (Frontend)
-      uses: railwayapp/railway-deploy@v1
-      with:
-        railway-token: ${{ secrets.RAILWAY_TOKEN }}
-        service: car-rental-frontend
-        working-directory: ./client
-
   deploy-backend:
     needs: test
     runs-on: ubuntu-latest
@@ -74,11 +47,13 @@ jobs:
         cache: 'npm'
     
     - name: Install dependencies
-      run: cd server && npm ci
+      run: |
+        npm install
+        cd server && npm ci
     
-    - name: Deploy to Railway
+    - name: Build and Deploy to Railway
       uses: railwayapp/railway-deploy@v1
       with:
         railway-token: ${{ secrets.RAILWAY_TOKEN }}
         service: car-rental-backend
-        working-directory: ./server
+        working-directory: ./
